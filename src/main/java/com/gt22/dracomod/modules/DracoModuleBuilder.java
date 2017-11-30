@@ -1,6 +1,7 @@
 package com.gt22.dracomod.modules;
 
 import net.minecraft.item.EnumRarity;
+import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,16 +14,18 @@ public class DracoModuleBuilder {
     private EnumRarity mRarity;
     private String mDesc;
     private boolean mTick;
+    private IDracoModule.IDracoStateChangeAction mDracoStateChangeAction;
 
     public DracoModuleBuilder(String mName) {
         this.mName = mName;
         this.mTag = "dm_" + mName;
-        this.mAction = (player, world, draco) -> {};
+        this.mAction = (player, world, draco, module) -> {};
         this.mDependencies = new ArrayList<>();
         this.mBlacklist = new ArrayList<>();
         this.mRarity = EnumRarity.common;
         this.mDesc = "Just Module";
         this.mTick = true;
+        this.mDracoStateChangeAction = (player, world, draco, module, newState) -> {};
     }
 
 	public DracoModuleBuilder setTag(String mTag) {
@@ -66,6 +69,11 @@ public class DracoModuleBuilder {
         return this;
     }
 
+    public DracoModuleBuilder setOnStateChangedAction(IDracoModule.IDracoStateChangeAction a){
+        this.mDracoStateChangeAction = a;
+        return this;
+    }
+
     public IDracoModule build(){
         return new IDracoModule() {
             @Override
@@ -106,6 +114,11 @@ public class DracoModuleBuilder {
             @Override
             public boolean doNeedTick() {
                 return mTick;
+            }
+
+            @Override
+            public IDracoStateChangeAction getOnStateChangeAction() {
+                return mDracoStateChangeAction;
             }
         };
     }

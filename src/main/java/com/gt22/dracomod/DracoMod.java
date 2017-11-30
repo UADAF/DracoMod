@@ -12,10 +12,14 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.util.DamageSource;
 import org.apache.logging.log4j.Logger;
+
+import java.util.List;
 
 @Mod(modid = R.modID, name = R.modName, version = R.modVersion, dependencies = R.modDependensies)
 public class DracoMod implements IMod {
@@ -26,6 +30,7 @@ public class DracoMod implements IMod {
 			return Items.apple;
 		}
 	};
+	public static final DamageSource dracoDamage = new DamageSource("dracoDamage").setDamageBypassesArmor();
 	@Mod.Instance(R.modID)
 	public static DracoMod modInstance;
 	@SidedProxy(serverSide = R.modProxy + "CommonProxy", clientSide = R.modProxy + "ClientProxy", modId = R.modID)

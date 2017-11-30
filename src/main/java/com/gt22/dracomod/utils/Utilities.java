@@ -91,4 +91,16 @@ public class Utilities {
             e.printStackTrace();
         }
     }
+
+    public static List<String> formatModuleDescription(String desc) {
+        String[] words = desc.split(" ");
+        List<String> ret = new ArrayList<>();
+        for (int i = 0; i < words.length; i++) {
+            double t = Math.max(Math.ceil(i/4.)-1, 0);
+            if(ret.size()-1 < t)
+                ret.add("");
+            ret.set((int) t, ret.get((int) t)  + words[i] + " ");
+        }
+       return ret;
+     }
 }

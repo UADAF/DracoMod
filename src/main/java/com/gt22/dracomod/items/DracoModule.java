@@ -38,17 +38,17 @@ public class DracoModule extends DracoModMetaItem {
 			list.add("INVALID MODULE. REMOVE IT, RIGHT NOW!!!!!!");
 			return;
 		}
-		list.add(module.getDescription());
+		list.addAll(Utilities.formatModuleDescription(module.getDescription()));
 		list.add("");
 		if (GuiScreen.isShiftKeyDown()) {
 			list.add("Name: " + module.getName());
 			list.add("Tag: " + module.getNbtTag());
 			if (!module.getConflicts().isEmpty()) {
-				list.add("Dependencies:");
+				list.add("Dependencies: ");
 				list.addAll(module.getDependencies().stream().map(m -> " -" + m.getName()).collect(Collectors.toList()));
 			}
 			if (!module.getConflicts().isEmpty()) {
-				list.add("Blacklisted:");
+				list.add("Blacklisted: ");
 				list.addAll(module.getConflicts().stream().map(m -> " -" + m.getName()).collect(Collectors.toList()));
 			}
 		} else {

@@ -10,6 +10,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -27,7 +28,7 @@ public class Draco extends BaubleBase {
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean adv) {
         List<IDracoModule> installed = Utilities.getInstalledModules(stack);
-        list.addAll(installed.stream().map(m -> " -" +m.getName()).collect(Collectors.toSet()));
+        list.addAll(installed.stream().map(m -> " " + (m.isEnabled(stack) ? "+" : "-") +m.getName()).collect(Collectors.toSet()));
 	}
 
 	@Override
@@ -47,8 +48,8 @@ public class Draco extends BaubleBase {
         if(tick >= DracoConfig.dracoTickDelay){
             tick = 0;
             dracoExecutor.submit(() -> modules.forEach(module -> {
-            	if(module.doNeedTick())
-            		module.getAction().perform(player, player.getEntityWorld(), itemstack);
+            	if(module.doNeedTick() && module.isEnabled(itemstack))
+            		module.getAction().perform(player, player.getEntityWorld(), itemstack, module);
 			}), player.getDisplayName() + "_Draco_TickThread");
         }
 	}
@@ -61,5 +62,16 @@ public class Draco extends BaubleBase {
 	@Override
 	public boolean canEquip(ItemStack itemstack, EntityLivingBase player) {
 		return player instanceof EntityPlayer;
+	}
+
+	public static NBTTagCompound getModuleNbt(IDracoModule module, ItemStack draco){
+		if(!draco.getTagCompound().hasKey(module.getNbtTag())) {
+			draco.getTagCompound().setTag(module.getNbtTag(), new NBTTagCompound());
+		}
+		return draco.getTagCompound().getCompoundTag(module.getNbtTag());
+	}
+
+	public static void setModuleNbt(NBTTagCompound tag, ItemStack draco, IDracoModule module){
+		draco.getTagCompound().setTag(module.getNbtTag(),  tag);
 	}
 }
